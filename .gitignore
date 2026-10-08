@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Local environment secrets - never commit real Supabase keys
+.env
+.env.local
+
+# Build output
+client/dist/
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Supabase CLI local state
+supabase/.temp/
+supabase/.branches/

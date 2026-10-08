@@ -1,0 +1,2215 @@
+/* ==========================================================================
+   School & Campus Event Scheduling System - main stylesheet
+   ==========================================================================
+   Plain CSS only: no Tailwind, no UI library, no CSS-in-JS.
+
+   The visual language is adapted from the E-Skedyul UI kit:
+     - navy + gold palette, Inter typeface
+     - generously rounded cards (14-24px) and fully rounded pill buttons
+     - soft navy borders instead of hard grey lines
+     - status pills for state, and a tinted row-based timeline
+
+   Sections:
+     1. Design tokens
+     2. Base & reset
+     3. App shell
+     4. Header / navigation
+     5. Buttons
+     6. Badges & status pills
+     7. Cards & alerts
+     8. Forms
+     9. Event list (filters, search, rows)
+    10. Timeline
+    11. Profile & committee
+    12. Modals & sheets
+    13. Responsive
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Design tokens
+   -------------------------------------------------------------------------- */
+:root {
+  /* Brand */
+  --navy: #1b3a6b;
+  --navy-dark: #142d54;
+  --navy-tint: #e8edf7;
+  --navy-tint-2: #f2f5fc;
+  --gold: #c9921a;
+  --gold-dark: #a87a12;
+  --gold-tint: #fef3dc;
+
+  /* Status */
+  --green: #2d7a4f;
+  --green-dark: #1f5a39;
+  --green-tint: #e8f5ee;
+  --red: #c0392b;
+  --red-dark: #a93226;
+  --red-tint: #fdedec;
+  --slate: #64748b;
+  --slate-tint: #f1f5f9;
+
+  /* Surfaces */
+  --page: #f4f6fb;
+  --surface: #ffffff;
+  --line: #d1d9e8;
+  --line-soft: #e2e8f0;
+
+  /* Text */
+  --ink: #1a202c;
+  --ink-soft: #64748b;
+  --ink-faint: #94a3b8;
+
+  /* Shape */
+  --radius-pill: 999px;
+  --radius-sm: 12px;
+  --radius: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow: 0 4px 16px rgba(27, 58, 107, 0.08);
+  --shadow-lg: 0 18px 40px rgba(15, 23, 42, 0.22);
+
+  --tap: 48px; /* comfortable minimum touch target */
+}
+
+/* --------------------------------------------------------------------------
+   2. Base & reset
+   -------------------------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 0.4rem;
+  color: var(--navy);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: 1.15rem; font-weight: 800; }
+h2 { font-size: 1.4rem; font-weight: 800; }
+h3 { font-size: 1rem; font-weight: 700; }
+
+p { margin: 0 0 0.5rem; }
+
+/* A single visible focus treatment for keyboard users. */
+:focus-visible {
+  outline: 3px solid rgba(27, 58, 107, 0.35);
+  outline-offset: 2px;
+}
+
+/* The preview's subtle press bounce, applied to every button. */
+button {
+  font-family: inherit;
+  transition: transform 160ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+button:not(:disabled):active {
+  transform: scale(0.96);
+  transition-duration: 80ms;
+}
+
+/* --------------------------------------------------------------------------
+   3. App shell
+   -------------------------------------------------------------------------- */
+.app-main {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.app-footer {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2rem;
+  color: var(--ink-faint);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* Screen heading: a bold title with a one-line explanatory note, matching the
+   preview's "My Availability / Open Slots" headers. */
+.page-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.page-head h2 {
+  margin: 0;
+}
+
+.page-head-note {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}
+
+/* --------------------------------------------------------------------------
+   4. Header / navigation
+   -------------------------------------------------------------------------- */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--navy);
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(20, 45, 84, 0.22);
+  padding: 0.9rem 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+/* Rounded brand tile, echoing the preview's icon block. */
+.navbar-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.navbar h1 {
+  color: #ffffff;
+  font-size: 1.02rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.navbar-subtitle {
+  display: block;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.66);
+  font-weight: 500;
+}
+
+.navbar-tabs {
+  display: flex;
+  gap: 0.25rem;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.25rem;
+  border-radius: var(--radius-sm);
+}
+
+.nav-tab {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0.5rem 1.1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.nav-tab:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.nav-tab.active {
+  background: #ffffff;
+  color: var(--navy);
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--radius-pill);
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.35rem 0.9rem 0.35rem 0.4rem;
+  cursor: pointer;
+  min-height: 40px;
+}
+
+.user-chip:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.user-chip-name {
+  font-weight: 700;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   5. Buttons
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: var(--tap);
+  padding: 0.7rem 1.5rem;
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--navy);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(27, 58, 107, 0.24);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--navy-dark);
+  border-color: var(--navy-dark);
+}
+
+/* Secondary = white with a navy outline, straight from the preview. */
+.btn-secondary,
+.btn:not(.btn-primary) {
+  background: var(--surface);
+  border-color: var(--navy);
+  color: var(--navy);
+}
+
+.btn-secondary:hover:not(:disabled),
+.btn:not(.btn-primary):hover:not(:disabled) {
+  background: var(--page);
+}
+
+/* Compact pill used for inline actions. */
+.btn-compact {
+  min-height: 40px;
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+}
+
+/* Light button for the navy header, where a white button would glare and the
+   default navy-on-white treatment would be invisible. */
+.btn-on-dark {
+  min-height: 40px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.88rem;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #ffffff;
+}
+
+.btn-on-dark:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.26);
+  border-color: #ffffff;
+}
+
+.new-event-btn {
+  align-self: stretch;
+}
+
+/* Gold call-to-action, e.g. the primary action inside a timeline day. */
+.btn-gold {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #ffffff;
+}
+
+.btn-gold:hover:not(:disabled) {
+  background: var(--gold-dark);
+  border-color: var(--gold-dark);
+}
+
+/* --------------------------------------------------------------------------
+   6. Badges & status pills
+   -------------------------------------------------------------------------- */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.status-badge.live {
+  background: rgba(45, 122, 79, 0.22);
+  border: 1px solid rgba(45, 122, 79, 0.55);
+  color: #d7f0e2;
+}
+
+.status-badge.local {
+  background: rgba(201, 146, 26, 0.22);
+  border: 1px solid rgba(201, 146, 26, 0.55);
+  color: #fbe6b8;
+}
+
+/* The two mode badges sit together: one for the database, one for auth. */
+.mode-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.status-badge-label {
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+  margin-right: 0.3rem;
+}
+
+/* Loud, one-line statement that something is running on a local fallback. */
+.demo-notice {
+  flex-basis: 100%;
+  margin: 0.15rem 0 0;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #fbe6b8;
+  text-align: right;
+}
+
+/* Which authentication is answering, stated inside the sign-in sheet. */
+.auth-mode-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.auth-mode-tag.mode-live {
+  background: var(--green-tint);
+  border: 1px solid rgba(45, 122, 79, 0.4);
+  color: var(--green-dark);
+}
+
+.auth-mode-tag.mode-demo {
+  background: var(--gold-tint);
+  border: 1px solid rgba(201, 146, 26, 0.45);
+  color: #8a6410;
+}
+
+/* Auth badge in the Navbar user chip */
+.session-auth-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.03em;
+  margin-left: 0.25rem;
+}
+
+.session-auth-pill.live {
+  background: rgba(45, 122, 79, 0.35);
+  border: 1px solid rgba(45, 122, 79, 0.7);
+  color: #e5f7ed;
+}
+
+.session-auth-pill.demo {
+  background: rgba(201, 146, 26, 0.35);
+  border: 1px solid rgba(201, 146, 26, 0.7);
+  color: #fff3d6;
+}
+
+/* Fallback notice bar in the Login Modal */
+.demo-notice-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--gold-tint);
+  border: 1px solid rgba(201, 146, 26, 0.4);
+  color: #7c5a0b;
+  padding: 0.55rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  margin-bottom: 0.85rem;
+}
+
+.modal-footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+}
+
+.dot-divider {
+  color: var(--muted);
+}
+
+.form-error-box {
+  background: #fdf2f2;
+  border: 1px solid #f8b4b4;
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+  margin-bottom: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-error-box .form-error {
+  margin: 0;
+}
+
+/* System & Connection Status Card in Profile View */
+.system-status-card {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.15rem;
+  margin-top: 1.25rem;
+}
+
+.system-status-card h4 {
+  margin: 0 0 0.85rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--heading);
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.85rem;
+}
+
+.status-item {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.status-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.status-item-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.status-item-note {
+  margin: 0.2rem 0 0;
+  font-size: 0.76rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.session-detail-line {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.token-preview {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.token-preview code {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.15rem 0.35rem;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.modal-head h2 {
+  margin: 0;
+}
+
+/* Sign-in / sign-up form inside the modal. */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.auth-form .field-label select,
+.auth-form .field-label input {
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 1rem;
+  min-height: var(--tap);
+  width: 100%;
+}
+
+.auth-form .field-label input:focus,
+.auth-form .field-label select:focus {
+  outline: none;
+  border-color: var(--navy);
+  box-shadow: 0 0 0 4px rgba(27, 58, 107, 0.12);
+}
+
+.link-button {
+  align-self: flex-start;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--navy);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Side-by-side readout of the two live/demo layers on the profile screen. */
+.mode-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.role-admin {
+  background: var(--gold-tint);
+  border: 1px solid rgba(201, 146, 26, 0.45);
+  color: #8a6410;
+}
+
+.role-manager {
+  background: var(--navy-tint);
+  border: 1px solid rgba(27, 58, 107, 0.3);
+  color: var(--navy);
+}
+
+.role-member,
+.role-student {
+  background: var(--slate-tint);
+  border: 1px solid var(--line);
+  color: #3f4c60;
+}
+
+/* Member types: faculty (blue), student (slate), admin/staff (gold), visitor (green) */
+.role-faculty {
+  background: var(--navy-tint);
+  border: 1px solid rgba(27, 58, 107, 0.3);
+  color: var(--navy);
+}
+
+.role-staff {
+  background: var(--gold-tint);
+  border: 1px solid rgba(201, 146, 26, 0.45);
+  color: #8a6410;
+}
+
+.role-visitor {
+  background: var(--green-tint);
+  border: 1px solid rgba(45, 122, 79, 0.4);
+  color: var(--green-dark);
+}
+
+/* The "serving / open / filled" pill language, reused for event status. */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+.pill-open,
+.pill-todo {
+  background: var(--surface);
+  border: 1.5px solid var(--navy);
+  color: var(--navy);
+}
+
+.pill-serving,
+.pill-in-progress {
+  background: var(--navy);
+  border: 1.5px solid var(--navy);
+  color: #ffffff;
+}
+
+.pill-filled,
+.pill-completed {
+  background: var(--green-tint);
+  border: 1.5px solid rgba(45, 122, 79, 0.4);
+  color: var(--green-dark);
+}
+
+.pill-overdue {
+  background: var(--red-tint);
+  border: 1.5px solid rgba(192, 57, 43, 0.4);
+  color: var(--red);
+}
+
+.pill-active {
+  background: var(--green-tint);
+  border: 1.5px solid rgba(45, 122, 79, 0.4);
+  color: var(--green-dark);
+}
+
+.pill-suspended {
+  background: var(--red-tint);
+  border: 1.5px solid rgba(192, 57, 43, 0.4);
+  color: var(--red);
+}
+
+/* Priority tags */
+.priority-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.priority-high {
+  background: var(--red-tint);
+  color: var(--red);
+}
+
+.priority-medium {
+  background: var(--gold-tint);
+  color: #8a6410;
+}
+
+.priority-low {
+  background: var(--slate-tint);
+  color: #475569;
+}
+
+/* --------------------------------------------------------------------------
+   7. Cards & alerts
+   -------------------------------------------------------------------------- */
+/* Card look is shared by the panels that genuinely are cards. The event list
+   is excluded because each event row is already its own card. */
+.card,
+.task-form,
+.calendar-view,
+.profile-card,
+.committee-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.card,
+.profile-card,
+.committee-card {
+  padding: 1.5rem;
+}
+
+.empty-state {
+  background: var(--surface);
+  border: 1.5px dashed var(--line);
+  border-radius: var(--radius);
+  color: var(--ink-soft);
+  padding: 2rem 1.25rem;
+  text-align: center;
+  font-size: 0.92rem;
+}
+
+.alert-banner {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--gold);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 1rem 1.15rem;
+}
+
+.alert-banner.clear {
+  background: var(--green-tint);
+  border-color: rgba(45, 122, 79, 0.3);
+  border-left-color: var(--green);
+  color: var(--green-dark);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.alert-line {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.alert-line + .alert-line {
+  margin-top: 0.45rem;
+}
+
+.alert-line.overdue {
+  color: var(--red);
+}
+
+.alert-line.soon {
+  color: var(--gold-dark);
+}
+
+/* --------------------------------------------------------------------------
+   8. Forms
+   -------------------------------------------------------------------------- */
+.task-form {
+  padding: 1.5rem;
+}
+
+.task-form h2 {
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--line-soft);
+  margin-bottom: 1.15rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.15rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Venue / description spans the full width. */
+.form-grid > label:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.15rem;
+  grid-column: 1 / -1;
+}
+
+/* The preview's field label: dark, semibold, sentence case. */
+.task-form label,
+.form-row label,
+.field-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.task-form input,
+.task-form select,
+.task-form textarea,
+.profile-card input[type='text'],
+.profile-card input[type='email'],
+.profile-card select,
+.add-member-form input,
+.add-member-form select {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0.7rem 1rem;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  resize: vertical;
+}
+
+.task-form input::placeholder,
+.task-form textarea::placeholder,
+.add-member-form input::placeholder {
+  color: var(--ink-faint);
+}
+
+.task-form input:hover,
+.task-form select:hover,
+.task-form textarea:hover,
+.add-member-form input:hover {
+  border-color: #9ba8c0;
+}
+
+.task-form input:focus,
+.task-form select:focus,
+.task-form textarea:focus,
+.profile-card input:focus,
+.profile-card select:focus,
+.add-member-form input:focus,
+.add-member-form select:focus {
+  outline: none;
+  border-color: var(--navy);
+  box-shadow: 0 0 0 4px rgba(27, 58, 107, 0.12);
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--red-tint);
+  border: 1.5px solid rgba(192, 57, 43, 0.35);
+  border-radius: var(--radius-sm);
+  color: var(--red);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.6rem 0.85rem;
+  margin: 0 0 1rem;
+}
+
+.save-message {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--green);
+}
+
+/* Toggle-style checkbox rows */
+.checkbox-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--ink);
+  padding: 0.5rem 0;
+  cursor: pointer;
+}
+
+.checkbox-label input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--navy);
+  cursor: pointer;
+}
+
+.notify-fieldset {
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem 1rem;
+  margin: 0;
+}
+
+.notify-fieldset legend {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 0 0.4rem;
+}
+
+/* --------------------------------------------------------------------------
+   9. Event list (filters, search, rows)
+   -------------------------------------------------------------------------- */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  overflow: hidden;
+}
+
+.list-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/* Segmented pill tabs, like the preview's Week / Day switcher. */
+.list-tabs {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--navy-tint);
+  padding: 0.3rem;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.list-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1 1 auto;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.55rem 0.85rem;
+  border-radius: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.filter-tab:hover {
+  color: var(--navy);
+}
+
+.filter-tab.active {
+  background: var(--surface);
+  color: var(--navy);
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 0.35rem;
+  border-radius: var(--radius-pill);
+  background: rgba(27, 58, 107, 0.1);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.filter-tab.active .filter-count {
+  background: var(--navy);
+  color: #ffffff;
+}
+
+.search-input {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0.7rem 1.1rem;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-pill);
+}
+
+.search-input::placeholder {
+  color: var(--ink-faint);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--navy);
+  box-shadow: 0 0 0 4px rgba(27, 58, 107, 0.12);
+}
+
+/* Event rows follow the preview's "Open Slots" list: a tinted card with a
+   left state stripe, a title block, and a status pill on the right. */
+.card-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.task-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: start;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-left: 6px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+/* Grid children must be allowed to shrink, otherwise a long event title or
+   assignee name pushes the card wider than the screen on small viewports. */
+.task-card > * {
+  min-width: 0;
+}
+
+.task-card:hover {
+  background: var(--navy-tint-2);
+  box-shadow: var(--shadow);
+}
+
+.task-card.status-todo { border-left-color: var(--navy); }
+.task-card.status-in-progress { border-left-color: var(--gold); }
+.task-card.status-completed { border-left-color: var(--green); }
+.task-card.status-overdue { border-left-color: var(--red); }
+
+.task-card-top {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.task-card-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+/* Icon buttons: 40px round targets so they stay easy to tap. */
+.icon-btn,
+.delete-btn,
+.edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.edit-btn {
+  color: var(--navy);
+  font-size: 1.15rem;
+}
+
+.edit-btn:hover {
+  background: var(--navy-tint);
+  border-color: rgba(27, 58, 107, 0.25);
+}
+
+.delete-btn {
+  color: var(--red);
+  font-size: 1.15rem;
+}
+
+.delete-btn:hover {
+  background: var(--red-tint);
+  border-color: rgba(192, 57, 43, 0.3);
+}
+
+.task-card h3 {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.task-description {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.task-deadline {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--navy);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.task-card-bottom {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.assignee-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--slate-tint);
+  border-radius: var(--radius-pill);
+  padding: 0.35rem 0.75rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Status control: a compact labelled pill-styled select. */
+.status-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.status-select-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.status-select select {
+  min-height: 40px;
+  max-width: 100%;
+  padding: 0.35rem 0.8rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--navy);
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.status-select select:hover {
+  border-color: #9ba8c0;
+}
+
+.status-select select:focus {
+  outline: none;
+  border-color: var(--navy);
+  box-shadow: 0 0 0 4px rgba(27, 58, 107, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   10. Timeline
+   -------------------------------------------------------------------------- */
+.calendar-view {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.calendar-view h2 {
+  margin: 0;
+}
+
+.calendar-day {
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* Today's group gets the navy outline treatment. */
+.calendar-day.today {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 4px rgba(27, 58, 107, 0.1);
+}
+
+.calendar-day-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  background: var(--navy-tint);
+  border-bottom: 1px solid var(--line);
+  padding: 0.85rem 1.1rem;
+}
+
+.calendar-day-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.calendar-day-count {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--navy);
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+  padding: 0.25rem 0.7rem;
+}
+
+.calendar-slots {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Each slot is a time gutter + a coloured priority dot + content, mirroring
+   the preview's timetable rows. */
+.calendar-slot {
+  display: grid;
+  grid-template-columns: 92px 12px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.35rem 0.75rem;
+  padding: 0.85rem 1.1rem;
+  border-left: 5px solid transparent;
+}
+
+.calendar-slot + .calendar-slot {
+  border-top: 1px solid var(--line-soft);
+}
+
+.calendar-slot:hover {
+  background: var(--navy-tint-2);
+}
+
+.calendar-slot.state-upcoming { border-left-color: var(--navy); }
+.calendar-slot.state-live { border-left-color: var(--red); }
+.calendar-slot.state-done { border-left-color: var(--green); }
+
+.slot-time {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--navy);
+  white-space: nowrap;
+}
+
+.slot-priority {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.slot-priority.priority-high { background: var(--red); }
+.slot-priority.priority-medium { background: var(--gold); }
+.slot-priority.priority-low { background: var(--line); }
+
+.slot-title {
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slot-status {
+  justify-self: end;
+}
+
+/* Second line: venue and audience, then the track tag and assignee. */
+.slot-detail {
+  grid-column: 3 / 5;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slot-tags {
+  grid-column: 3 / 5;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.slot-assignee {
+  grid-column: 3 / 5;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   11. Profile & committee
+   -------------------------------------------------------------------------- */
+.profile-view {
+  display: block;
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.profile-card,
+.committee-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.profile-avatar,
+.account-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-sm);
+  background: var(--navy);
+  color: #ffffff;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.profile-name {
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0;
+}
+
+.profile-email {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  margin: 0 0 0.4rem;
+}
+
+.profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+/* Admin "add personnel" block */
+.add-member-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  background: var(--navy-tint-2);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.1rem;
+}
+
+.add-member-form h3 {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.add-member-form .form-actions {
+  grid-column: 1 / -1;
+}
+
+/* Committee list: the preview's ministry list, one row per person. */
+.committee-card h2 {
+  margin: 0;
+}
+
+.committee-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.committee-table th {
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.committee-table td {
+  padding: 0.8rem 0.6rem;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: middle;
+  color: var(--ink);
+}
+
+.committee-table tbody tr:hover {
+  background: var(--navy-tint-2);
+}
+
+.committee-table tr.current-row {
+  background: var(--navy-tint);
+}
+
+.committee-table tr.current-row td {
+  font-weight: 700;
+}
+
+.modal-hint {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   12. Modals & sheets
+   -------------------------------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  animation: sheet-backdrop-in 240ms ease-out both;
+}
+
+.modal {
+  width: 100%;
+  max-width: 480px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: var(--shadow-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: sheet-panel-in 380ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.modal h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.account-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.account-card {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0.7rem 0.85rem;
+  text-align: left;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  font: inherit;
+  cursor: pointer;
+}
+
+.account-card:hover {
+  border-color: var(--navy);
+  background: var(--navy-tint-2);
+}
+
+.account-card.current {
+  border-color: var(--navy);
+  background: var(--navy-tint);
+}
+
+.account-avatar {
+  width: 44px;
+  height: 44px;
+  font-size: 0.9rem;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.account-name {
+  font-weight: 700;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-email {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Bottom-sheet entrance, borrowed from the preview. */
+@keyframes sheet-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sheet-panel-in {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* --------------------------------------------------------------------------
+   13. Responsive
+   -------------------------------------------------------------------------- */
+@media (min-width: 640px) {
+  .modal-overlay {
+    align-items: center;
+    padding: 1.5rem;
+  }
+
+  .modal {
+    border-radius: var(--radius-xl);
+  }
+
+  .new-event-btn {
+    align-self: flex-start;
+  }
+
+  .list-controls {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .list-tabs {
+    flex: 1 1 auto;
+  }
+
+  .search-input {
+    flex: 0 1 320px;
+    width: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .profile-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Stack the timeline row so long activity titles stay readable. The
+     priority dot moves inline next to the time. */
+  .calendar-slot {
+    grid-template-columns: 78px minmax(0, 1fr);
+    row-gap: 0.4rem;
+  }
+
+  .slot-priority {
+    display: none;
+  }
+
+  .slot-status {
+    grid-column: 2 / 3;
+    justify-self: start;
+  }
+
+  .slot-detail,
+  .slot-tags {
+    grid-column: 2 / 3;
+  }
+}
+
+@media (max-width: 680px) {
+  .navbar {
+    position: static;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navbar-tabs {
+    order: 3;
+    width: 100%;
+  }
+
+  .nav-tab {
+    flex: 1 1 0;
+    text-align: center;
+    padding: 0.55rem 0.5rem;
+  }
+
+  .navbar-right {
+    justify-content: space-between;
+  }
+
+  /* Keep the title block able to shrink so the chip never pushes the header
+     wider than the viewport. */
+  .navbar-brand {
+    min-width: 0;
+  }
+
+  .navbar h1 {
+    font-size: 0.95rem;
+  }
+
+  .navbar-subtitle {
+    display: none;
+  }
+
+  .user-chip-name {
+    max-width: 110px;
+  }
+
+  .form-grid,
+  .form-row,
+  .add-member-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app-main {
+    padding: 1rem 0.75rem 3.5rem;
+  }
+
+  .task-list,
+  .task-form,
+  .calendar-view,
+  .card,
+  .profile-card,
+  .committee-card {
+    padding: 1.1rem;
+    border-radius: var(--radius);
+  }
+
+  /* The filter row scrolls sideways rather than stretching the card. */
+  .list-tabs {
+    margin: 0 -0.25rem;
+    padding: 0.3rem 0.25rem;
+  }
+
+  .filter-tab {
+    flex: 0 0 auto;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+
+  /* Let the committee table scroll instead of squashing its columns. */
+  .committee-card {
+    overflow-x: auto;
+  }
+
+  .committee-table {
+    min-width: 520px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Safety net: nothing should ever scroll the page sideways. Wide content such
+   as the committee table scrolls inside its own container instead.
+   -------------------------------------------------------------------------- */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   14. Schedule (day picker -> filters -> time-grouped activities)
+   -------------------------------------------------------------------------- */
+.schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.schedule-head h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.schedule-note {
+  margin: 0.15rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+/* Audience legend lines under the heading. */
+.audience-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.legend-note {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.audience-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.tone-open {
+  background: var(--green);
+  border: 1.5px solid var(--green);
+  color: #ffffff;
+}
+
+.tone-exclusive {
+  background: var(--surface);
+  border: 1.5px solid var(--navy);
+  color: var(--navy);
+}
+
+/* Day picker: horizontal strip of day cards. */
+.day-picker {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.25rem 0.1rem 0.5rem;
+  scrollbar-width: none;
+}
+
+.day-picker::-webkit-scrollbar {
+  display: none;
+}
+
+.day-card {
+  position: relative;
+  flex: 1 0 76px;
+  min-width: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.7rem 0.5rem 0.9rem;
+  background: var(--slate-tint);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius);
+  font: inherit;
+  cursor: pointer;
+}
+
+.day-card:hover {
+  border-color: rgba(27, 58, 107, 0.35);
+}
+
+.day-card.active {
+  background: var(--navy);
+  border-color: var(--navy);
+}
+
+.day-weekday {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.day-card.active .day-weekday {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.day-number {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.day-card.active .day-number {
+  color: var(--gold);
+}
+
+/* Small marker showing the day has activities. */
+.day-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.day-dot[data-count]:not([data-count='0']) {
+  background: var(--gold);
+}
+
+.day-summary {
+  margin: 0;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+/* Track filter chips, wrapping onto as many rows as needed. */
+.track-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 38px;
+  padding: 0.4rem 0.95rem;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.filter-chip:hover {
+  border-color: var(--navy);
+  color: var(--navy);
+}
+
+.filter-chip.active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #ffffff;
+}
+
+.filter-chip.chip-public.active {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+/* Activity sections */
+.activity-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.activity-period {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.activity-rows {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line-soft);
+}
+
+/* One activity: time gutter on the left, content filling the rest. */
+.activity-row {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr) auto;
+  gap: 0.9rem;
+  align-items: start;
+  padding: 1rem 0.15rem;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.activity-row > * {
+  min-width: 0;
+}
+
+.activity-time {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
+
+.activity-hour {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.activity-suffix {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.activity-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.activity-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+}
+
+/* Finished activities recede so the live and upcoming ones stand out. */
+.activity-row.state-done .activity-title,
+.activity-row.state-done .activity-meta {
+  color: var(--ink-faint);
+}
+
+.activity-meta {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}
+
+.activity-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+}
+
+.activity-assignee {
+  margin: 0.1rem 0 0;
+  color: var(--ink-faint);
+  font-size: 0.78rem;
+}
+
+/* Track tag (organising body) with a colour per college. */
+.track-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.tone-navy {
+  background: var(--navy-tint);
+  color: var(--navy);
+}
+
+.tone-gold {
+  background: var(--gold-tint);
+  color: #8a6410;
+}
+
+.tone-green {
+  background: var(--green-tint);
+  color: var(--green-dark);
+}
+
+.tone-maroon {
+  background: #fdeaea;
+  color: #8c2b20;
+}
+
+.tone-violet {
+  background: #efeafd;
+  color: #5b3fb0;
+}
+
+.tone-slate {
+  background: var(--slate-tint);
+  color: #475569;
+}
+
+/* Done / Live / Upcoming tag. */
+.state-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  background: var(--slate-tint);
+  color: #475569;
+}
+
+.state-tag.state-live {
+  background: var(--red);
+  color: #ffffff;
+}
+
+.state-tag.state-upcoming {
+  background: var(--surface);
+  border: 1.5px solid var(--navy);
+  color: var(--navy);
+}
+
+/* Pulsing dot so a live activity is obvious at a glance. */
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffffff;
+  animation: live-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.7); }
+}
+
+.activity-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+/* Form: a full-width field inside the two-column grid. */
+.form-grid > label.field-span {
+  grid-column: 1 / -1;
+}
+
+.field-note {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 680px) {
+  .activity-row {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 0.7rem;
+  }
+
+  .activity-actions {
+    grid-column: 2 / 3;
+    justify-self: start;
+  }
+
+  .activity-hour {
+    font-size: 1rem;
+  }
+
+  .day-card {
+    flex: 0 0 68px;
+    min-width: 68px;
+  }
+}
+
